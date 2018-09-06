@@ -1,29 +1,60 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, VirtualizedList} from 'react-native';
+import SQLite from 'react-native-sqlite-storage';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+let errorCB = (err) => {
+  console.log("SQL Error: " + err)
+};
+let openCB = () => {
+  console.log("Database OPENED")
+};
+
+let db = SQLite.openDatabase({name: "chinook.db", readOnly: true, createFromLocation: 1}, openCB, errorCB);
 
 type Props = {};
+
+class ListItem extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {text: "Fetching..."};
+    db.transaction((tx) => {
+      tx.executeSql(`select *
+                     from Employees limit 1 offset ${props.item}`, [], (tx, results) => {
+        this.setState({text: results.rows.item(0).FirstName})
+      })
+    })
+  }
+
+  render() {
+    return (
+      <Text style={styles.item}>{this.state.text}</Text>
+    )
+  }
+}
+
 export default class App extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {count: 0};
+    db.transaction((tx) => {
+        tx.executeSql(`select count(*) as count
+                       from Employees`, [], (tx, results) => {
+          this.setState({count: results.rows.item(0).count})
+        })
+      }
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <VirtualizedList
+          data={db}
+          renderItem={({item}) => <ListItem item={item} style={styles.item}/>}
+          getItem={(db, index) => index}
+          getItemCount={() => this.state.count}
+          keyExtractor={(item) => `key${item}`}
+        />
       </View>
     );
   }
@@ -35,6 +66,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 88,
   },
   welcome: {
     fontSize: 20,
