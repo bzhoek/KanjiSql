@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, VirtualizedList} from 'react-native';
+import {StyleSheet, Text, SafeAreaView, VirtualizedList} from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 
 let errorCB = (err) => {
@@ -9,7 +9,7 @@ let openCB = () => {
   console.log("Database OPENED")
 };
 
-let db = SQLite.openDatabase({name: "chinook.db", readOnly: true, createFromLocation: 1}, openCB, errorCB);
+let db = SQLite.openDatabase({name: "kanji.sqlite", readOnly: true, createFromLocation: 1}, openCB, errorCB);
 
 type Props = {};
 
@@ -19,8 +19,8 @@ class ListItem extends Component<Props> {
     this.state = {text: "Fetching..."};
     db.transaction((tx) => {
       tx.executeSql(`select *
-                     from Employees limit 1 offset ${props.item}`, [], (tx, results) => {
-        this.setState({text: results.rows.item(0).FirstName})
+                     from Kanji limit 1 offset ${props.item}`, [], (tx, results) => {
+        this.setState({text: results.rows.item(0).meaning})
       })
     })
   }
@@ -38,7 +38,7 @@ export default class App extends Component<Props> {
     this.state = {count: 0};
     db.transaction((tx) => {
         tx.executeSql(`select count(*) as count
-                       from Employees`, [], (tx, results) => {
+                       from Kanji`, [], (tx, results) => {
           this.setState({count: results.rows.item(0).count})
         })
       }
@@ -47,7 +47,7 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
         <VirtualizedList
           data={db}
           renderItem={({item}) => <ListItem item={item} style={styles.item}/>}
@@ -55,18 +55,12 @@ export default class App extends Component<Props> {
           getItemCount={() => this.state.count}
           keyExtractor={(item) => `key${item}`}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
   item: {
     padding: 10,
     fontSize: 18,
