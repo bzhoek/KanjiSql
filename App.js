@@ -17,9 +17,12 @@ class ListItem extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {text: "Fetching..."};
+  }
+
+  componentDidMount() {
     db.transaction((tx) => {
       tx.executeSql(`select *
-                     from Kanji limit 1 offset ${props.item}`, [], (tx, results) => {
+                     from Kanji limit 1 offset ${this.props.item}`, [], (tx, results) => {
         this.setState({text: results.rows.item(0).meaning})
       })
     })
@@ -36,6 +39,9 @@ export default class App extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {count: 0};
+  }
+
+  componentDidMount() {
     db.transaction((tx) => {
         tx.executeSql(`select count(*) as count
                        from Kanji`, [], (tx, results) => {
@@ -47,7 +53,7 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#eee'}}>
         <VirtualizedList
           data={db}
           renderItem={({item}) => <ListItem item={item} style={styles.item}/>}
