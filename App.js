@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {NavigatorIOS} from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 import KanjiList from './components/KanjiList'
 
@@ -15,7 +16,7 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
-      <KanjiList db={db} style={{flex: 1, backgroundColor: '#eee'}}/>
+      <NavigatorIOS initialRoute={{component: KanjiList, passProps: {db: db}, title: 'All Kanji'}} style={{flex: 1}}/>
     );
   }
 }

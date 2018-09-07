@@ -41,15 +41,13 @@ export default class KanjiList extends Component<Props> {
 
   render() {
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: '#eee'}}>
-        <VirtualizedList
-          data={this.props.db}
-          renderItem={({item}) => <ListItem db={this.props.db} item={item} style={styles.item}/>}
-          getItem={(db, index) => index}
-          getItemCount={() => this.state.count}
-          keyExtractor={(item) => `key${item}`}
-        />
-      </SafeAreaView>
+      <VirtualizedList
+        data={this.props.db}
+        renderItem={({item}) => <ListItem db={this.props.db} item={item} style={styles.item}/>}
+        getItem={(db, index) => index}
+        getItemCount={() => this.state.count}
+        keyExtractor={(item) => `key${item}`}
+      />
     );
   }
 }
