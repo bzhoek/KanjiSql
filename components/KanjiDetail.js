@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, WebView} from 'react-native';
+import {Text, SafeAreaView, WebView} from 'react-native';
 import html from './Kanji.html'
 
 export default class KanjiDetail extends Component {
@@ -22,11 +22,11 @@ export default class KanjiDetail extends Component {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
     let {literal, meaning} = this.state
     return (
-      <View style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
         <WebView source={html} style={{flex: 1}} key={literal}
           injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         <Text style={{flex: 1}}>{meaning}</Text>
-      </View>
+      </SafeAreaView>
     )
   }
 }

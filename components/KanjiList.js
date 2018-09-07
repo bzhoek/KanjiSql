@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {Text, VirtualizedList, StyleSheet} from 'react-native';
+import {Text, TouchableHighlight, VirtualizedList, StyleSheet} from 'react-native';
+import KanjiDetail from './KanjiDetail'
 
 class ListItem extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {text: "Fetching..."};
+    this._onPress = this._onPress.bind(this);
   }
 
   componentDidMount() {
@@ -16,9 +18,15 @@ class ListItem extends Component<Props> {
     })
   }
 
+  _onPress = () => {
+    this.props.onPressItem(this.props.item);
+  }
+
   render() {
     return (
-      <Text style={styles.item}>{this.state.text}</Text>
+      <TouchableHighlight onPress={this._onPress} underlayColor='#dddddd'>
+        <Text style={styles.item}>{this.state.text}</Text>
+      </TouchableHighlight>
     )
   }
 }
@@ -39,11 +47,23 @@ export default class KanjiList extends Component<Props> {
     )
   }
 
+  _onPressItem = (index) => {
+    this.props.navigator.push({
+      component: KanjiDetail,
+      title: "item.literal",
+      passProps: {
+        index: index,
+        db: this.props.db
+      }
+    });
+  }
+
   render() {
     return (
       <VirtualizedList
         data={this.props.db}
-        renderItem={({item}) => <ListItem db={this.props.db} item={item} style={styles.item}/>}
+        renderItem={({item}) => <ListItem db={this.props.db} item={item} onPressItem={this._onPressItem}
+          style={styles.item}/>}
         getItem={(db, index) => index}
         getItemCount={() => this.state.count}
         keyExtractor={(item) => `key${item}`}
