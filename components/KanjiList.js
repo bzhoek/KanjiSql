@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, SafeAreaView, VirtualizedList, StyleSheet} from 'react-native';
+import {Text, VirtualizedList, StyleSheet} from 'react-native';
 
 class ListItem extends Component<Props> {
   constructor(props) {
