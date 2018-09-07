@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {NavigatorIOS, TabBarIOS, Text} from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+import KanjiDetail from './components/KanjiDetail'
 import KanjiList from './components/KanjiList'
 
 let errorCB = (err) => {
@@ -38,7 +39,7 @@ export default class App extends Component<Props> {
         <TabBarIOS.Item systemIcon="history"
           selected={this.state.selectedTab === 'tabDaily'}
           onPress={() => this.setTab('tabDaily')}>
-          <Text style={{flex: 1}}>Helleu</Text>
+          <KanjiDetail db={db} index={0} style={{flex: 1}}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item systemIcon="more"
           selected={this.state.selectedTab === 'tabList'}
