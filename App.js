@@ -4,7 +4,8 @@ import SQLite from 'react-native-sqlite-storage';
 import KanjiDetail from './components/KanjiDetail'
 import KanjiList from './components/KanjiList'
 
-import { YellowBox } from 'react-native';
+import {YellowBox} from 'react-native';
+
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 let errorCB = (err) => {
@@ -42,7 +43,7 @@ export default class App extends Component<Props> {
         <TabBarIOS.Item systemIcon="history"
           selected={this.state.selectedTab === 'tabDaily'}
           onPress={() => this.setTab('tabDaily')}>
-          <KanjiDetail db={db} index={0} style={{flex: 1}}/>
+          <KanjiDetail db={db} index={0}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item systemIcon="more"
           selected={this.state.selectedTab === 'tabList'}
