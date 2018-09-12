@@ -23,7 +23,9 @@ export default class KanjiDetail extends Component {
     let {literal, meaning} = this.state
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-        <WebView source={html} style={{flex: 1}} key={literal}
+        <WebView originWhitelist={['*']}
+          source={html}
+          style={{flex: 1}} key={literal}
           injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         <Text style={{flex: 1}}>{meaning}</Text>
       </SafeAreaView>
