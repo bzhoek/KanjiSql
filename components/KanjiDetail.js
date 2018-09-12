@@ -2,16 +2,21 @@ import React, {Component} from 'react';
 import {Text, SafeAreaView, WebView, StyleSheet} from 'react-native';
 import html from './Kanji.html'
 
+import Randomizer from './Randomizer'
+
 export default class KanjiDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {drawing: "", literal: "", meaning: ""}
+    this.lookup = new Randomizer()
+    this.index = this.lookup.forDate()
+    this.index = 0
   }
 
   componentDidMount() {
     this.props.db.transaction((tx) => {
       tx.executeSql(`select *
-                     from Kanji limit 1 offset ${this.props.index}`, [], (tx, results) => {
+                     from Kanji where frequency not null order by frequency limit 1 offset ${this.index}`, [], (tx, results) => {
         let state = {drawing, literal, meaning} = results.rows.item(0)
         this.setState(state)
       })
