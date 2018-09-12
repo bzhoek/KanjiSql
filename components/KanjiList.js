@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Text, TouchableHighlight, VirtualizedList, StyleSheet} from 'react-native';
+import {Text, TouchableHighlight, View, VirtualizedList, StyleSheet} from 'react-native';
 import KanjiDetail from './KanjiDetail'
 
 class ListItem extends Component<Props> {
   constructor(props) {
     super(props);
-    this.state = {text: "Fetching..."};
+    this.state = {literal: "", meaning: "Fetching..."};
     this._onPress = this._onPress.bind(this);
   }
 
@@ -13,7 +13,8 @@ class ListItem extends Component<Props> {
     this.props.db.transaction((tx) => {
       tx.executeSql(`select *
                      from Kanji limit 1 offset ${this.props.item}`, [], (tx, results) => {
-        this.setState({text: results.rows.item(0).meaning})
+        let state = {literal, meaning} = results.rows.item(0)
+        this.setState(state)
       })
     })
   }
@@ -25,7 +26,10 @@ class ListItem extends Component<Props> {
   render() {
     return (
       <TouchableHighlight onPress={this._onPress} underlayColor='#dddddd'>
-        <Text style={styles.item}>{this.state.text}</Text>
+        <View style={styles.item}>
+          <Text style={styles.literal}>{this.state.literal}</Text>
+          <Text style={styles.meaning}>{this.state.meaning}</Text>
+        </View>
       </TouchableHighlight>
     )
   }
@@ -62,8 +66,7 @@ export default class KanjiList extends Component<Props> {
     return (
       <VirtualizedList
         data={this.props.db}
-        renderItem={({item}) => <ListItem db={this.props.db} item={item} onPressItem={this._onPressItem}
-          style={styles.item}/>}
+        renderItem={({item}) => <ListItem db={this.props.db} item={item} onPressItem={this._onPressItem}/>}
         getItem={(db, index) => index}
         getItemCount={() => this.state.count}
         keyExtractor={(item) => `key${item}`}
@@ -74,8 +77,16 @@ export default class KanjiList extends Component<Props> {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 10,
+    flexDirection: 'row',
+    padding: 8,
+    height: 64
+  },
+  literal: {
+    fontSize: 48
+  },
+  meaning: {
+    flex: 1,
+    paddingLeft: 8,
     fontSize: 18,
-    height: 88,
   },
 });
