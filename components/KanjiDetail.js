@@ -58,7 +58,7 @@ export default class KanjiDetail extends Component {
     return (
       <SafeAreaView style={styles.view}>
         <View style={{flex: 1}}{...this._panResponder.panHandlers}>
-          <WebView source={html} originWhitelist={['*']}
+          <WebView source={html} originWhitelist={['*']} bounces={false}
             style={styles.drawing} key={literal}
             injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
           <View style={styles.detail}>
