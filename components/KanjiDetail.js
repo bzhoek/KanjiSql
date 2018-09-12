@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, SafeAreaView, WebView, StyleSheet} from 'react-native';
+import {PanResponder, Text, SafeAreaView, View, WebView, StyleSheet} from 'react-native';
 import html from './Kanji.html'
 
 import Randomizer from './Randomizer'
@@ -7,17 +7,46 @@ import Randomizer from './Randomizer'
 export default class KanjiDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {drawing: "", literal: "", meaning: ""}
+    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: new Date()}
     this.lookup = new Randomizer()
-    this.index = this.lookup.forDate()
-    this.index = 0
+
+    this.handleSwipe = this.handleSwipe.bind(this);
+
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderGrant: (e, gestureState) => {
+        console.log(`Granted ${gestureState.x0}`)
+      },
+      onPanResponderRelease: (e, gestureState) => {
+        this.handleSwipe(gestureState.dx > 0 ? -1 : +1)
+      }
+    });
+  }
+
+  handleSwipe(delta) {
+    let newDate = this.state.forDate
+    newDate.setDate(newDate.getDate() + delta)
+    this.setState({forDate: newDate})
   }
 
   componentDidMount() {
+    this.loadForState()
+  }
+
+  componentDidUpdate() {
+    this.loadForState()
+  }
+
+  loadForState() {
+    let index = this.lookup.forDate(this.state.forDate)
+
     this.props.db.transaction((tx) => {
       tx.executeSql(`select *
-                     from Kanji where frequency not null order by frequency limit 1 offset ${this.index}`, [], (tx, results) => {
-        let state = {drawing, literal, meaning} = results.rows.item(0)
+                     from Kanji
+                     where frequency not null
+                     order by frequency limit 1 offset ${index}`, [], (tx, results) => {
+        let state = {drawing, literal, meaning, frequency} = results.rows.item(0)
         this.setState(state)
       })
     })
@@ -25,13 +54,18 @@ export default class KanjiDetail extends Component {
 
   render() {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
-    let {literal, meaning} = this.state
+    let {literal, meaning, frequency} = this.state
     return (
       <SafeAreaView style={styles.view}>
-        <WebView source={html} originWhitelist={['*']}
-          style={styles.drawing} key={literal}
-          injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
-        <Text style={styles.detail}>{meaning}</Text>
+        <View style={{flex: 1}}{...this._panResponder.panHandlers}>
+          <WebView source={html} originWhitelist={['*']}
+            style={styles.drawing} key={literal}
+            injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
+          <View style={styles.detail}>
+            <Text style={styles.text}>{this.state.forDate.toDateString()}</Text>
+            <Text style={styles.text}>{meaning} {frequency}</Text>
+          </View>
+        </View>
       </SafeAreaView>
     )
   }
@@ -43,5 +77,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent'
   },
-  detail: {flex: 1}
+  detail: {
+    flex: 1,
+    padding: 8,
+  },
+  text: {
+    fontSize: 18,
+  }
 });

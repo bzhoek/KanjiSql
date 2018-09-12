@@ -21,4 +21,9 @@ export default class Randomizer {
   forDate(date = new Date()) {
     return Math.round(date.getTime() / ONE_DAY) % this.count
   }
+
+  forIndex(i) {
+    return this.entries[i % this.count]
+  }
+
 }
