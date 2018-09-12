@@ -4,6 +4,9 @@ import SQLite from 'react-native-sqlite-storage';
 import KanjiDetail from './components/KanjiDetail'
 import KanjiList from './components/KanjiList'
 
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Remote debugger']);
+
 let errorCB = (err) => {
   console.log("SQL Error: " + err)
 };
