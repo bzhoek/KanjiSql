@@ -9,7 +9,8 @@ import {
   VirtualizedList,
   StyleSheet
 } from 'react-native';
-import KanjiDetail from './KanjiDetail'
+import KanjiListDetail from './KanjiListDetail'
+import LiteralMeaning from './LiteralMeaning'
 
 class ListItem extends Component<Props> {
   constructor(props) {
@@ -35,10 +36,7 @@ class ListItem extends Component<Props> {
   render() {
     return (
       <TouchableHighlight onPress={this._onPress} underlayColor='#dddddd'>
-        <View style={styles.item}>
-          <Text style={styles.literal}>{this.state.literal}</Text>
-          <Text style={styles.meaning}>{this.state.meaning}</Text>
-        </View>
+        <LiteralMeaning literal={this.state.literal} meaning={this.state.meaning}/>
       </TouchableHighlight>
     )
   }
@@ -62,7 +60,7 @@ export default class KanjiList extends Component<Props> {
 
   _onPressItem = (index) => {
     this.props.navigator.push({
-      component: KanjiDetail,
+      component: KanjiListDetail,
       title: "item.literal",
       passProps: {
         index: index,
@@ -75,7 +73,7 @@ export default class KanjiList extends Component<Props> {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{flex: 1}}>
-          <TextInput />
+          <TextInput/>
         </View>
       </TouchableWithoutFeedback>
     );

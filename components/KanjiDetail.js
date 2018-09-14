@@ -10,6 +10,7 @@ import {
   StyleSheet
 } from 'react-native';
 import html from './Kanji.html'
+import LiteralMeaning from './LiteralMeaning'
 
 import Randomizer from './Randomizer'
 
@@ -95,7 +96,9 @@ export default class KanjiDetail extends Component {
           <TouchableHighlight onPress={this.onPressDate} underlayColor='#dddddd'>
             <Text style={styles.text}>{this.state.forDate.toDateString()}</Text>
           </TouchableHighlight>
-          <Text style={styles.text}>{meaning} {frequency}</Text>
+
+          <Text style={styles.text}>{frequency}</Text>
+          <LiteralMeaning literal={literal} meaning={meaning}/>
         </View>
       </SafeAreaView>
     )
