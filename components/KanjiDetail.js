@@ -22,7 +22,9 @@ export default class KanjiDetail extends Component {
     this.handleSwipe = this.handleSwipe.bind(this);
     this.pickDate = this.pickDate.bind(this);
     this.onPressDate = this.onPressDate.bind(this);
+  }
 
+  componentWillMount() {
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
