@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {
   Keyboard,
+  StyleSheet,
   TextInput,
-  Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
   View,
-  VirtualizedList,
-  StyleSheet
+  VirtualizedList
 } from 'react-native';
 import KanjiListDetail from './KanjiListDetail'
 import LiteralMeaning from './LiteralMeaning'
@@ -68,7 +67,6 @@ export default class KanjiList extends Component<Props> {
       }
     });
   }
-
   renderHeader = () => {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

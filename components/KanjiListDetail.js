@@ -1,18 +1,7 @@
 import React, {Component} from 'react';
-import {
-  DatePickerIOS,
-  PanResponder,
-  Text,
-  TouchableHighlight,
-  SafeAreaView,
-  View,
-  WebView,
-  StyleSheet
-} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, WebView} from 'react-native';
 import html from './Kanji.html'
 import LiteralMeaning from './LiteralMeaning'
-
-import Randomizer from './Randomizer'
 
 export default class KanjiListDetail extends Component {
   constructor(props) {

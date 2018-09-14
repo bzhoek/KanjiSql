@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import {
   DatePickerIOS,
   PanResponder,
+  SafeAreaView,
+  StyleSheet,
   Text,
   TouchableHighlight,
-  SafeAreaView,
   View,
-  WebView,
-  StyleSheet
+  WebView
 } from 'react-native';
 import html from './Kanji.html'
 import LiteralMeaning from './LiteralMeaning'
