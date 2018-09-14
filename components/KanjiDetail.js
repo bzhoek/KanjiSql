@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
-import {PanResponder, Text, SafeAreaView, View, WebView, StyleSheet} from 'react-native';
+import {
+  DatePickerIOS,
+  PanResponder,
+  Text,
+  TouchableHighlight,
+  SafeAreaView,
+  View,
+  WebView,
+  StyleSheet
+} from 'react-native';
 import html from './Kanji.html'
 
 import Randomizer from './Randomizer'
@@ -11,6 +20,8 @@ export default class KanjiDetail extends Component {
     this.lookup = new Randomizer()
 
     this.handleSwipe = this.handleSwipe.bind(this);
+    this.pickDate = this.pickDate.bind(this);
+    this.onPressDate = this.onPressDate.bind(this);
 
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
@@ -27,6 +38,14 @@ export default class KanjiDetail extends Component {
   handleSwipe(delta) {
     let newDate = this.state.forDate
     newDate.setDate(newDate.getDate() + delta)
+    this.setState({forDate: newDate})
+  }
+
+  onPressDate() {
+    this.setState({picking: !this.state.picking})
+  }
+
+  pickDate(newDate) {
     this.setState({forDate: newDate})
   }
 
@@ -52,19 +71,29 @@ export default class KanjiDetail extends Component {
     })
   }
 
+
   render() {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
     let {literal, meaning, frequency} = this.state
     return (
       <SafeAreaView style={styles.view}>
+        {this.state.picking &&
+        <DatePickerIOS style={styles.pick}
+          mode='date'
+          date={this.state.forDate}
+          onDateChange={this.pickDate}
+        />
+        }
         <View style={{flex: 1}}{...this._panResponder.panHandlers}>
           <WebView source={html} originWhitelist={['*']} bounces={false}
             style={styles.drawing} key={literal}
             injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
-          <View style={styles.detail}>
+        </View>
+        <View style={styles.detail}>
+          <TouchableHighlight onPress={this.onPressDate} underlayColor='#dddddd'>
             <Text style={styles.text}>{this.state.forDate.toDateString()}</Text>
-            <Text style={styles.text}>{meaning} {frequency}</Text>
-          </View>
+          </TouchableHighlight>
+          <Text style={styles.text}>{meaning} {frequency}</Text>
         </View>
       </SafeAreaView>
     )
@@ -72,7 +101,10 @@ export default class KanjiDetail extends Component {
 }
 
 const styles = StyleSheet.create({
-  view: {flex: 1, backgroundColor: '#fff'},
+  view: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
   drawing: {
     flex: 1,
     backgroundColor: 'transparent'
