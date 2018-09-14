@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AppState, NavigatorIOS, TabBarIOS, Text} from 'react-native';
-import SQLite from 'react-native-sqlite-storage';
+import Database from './Database'
 import KanjiDetail from './components/KanjiDetail'
 import KanjiList from './components/KanjiList'
 
@@ -8,41 +8,7 @@ import {YellowBox} from 'react-native';
 
 YellowBox.ignoreWarnings(['Remote debugger']);
 
-class Database {
-  constructor() {
-    this.db = null
-    this.open()
-  }
-
-  logError = (err) => {
-    console.log("SQL Error: " + err)
-  };
-
-  close() {
-    if (this.db) {
-      this.db.close(() => console.log("Database CLOSED"), this.logError)
-    }
-    this.db = null
-  }
-
-  open() {
-    if (!this.db) {
-      this.db = SQLite.openDatabase({
-        name: "kanji.sqlite",
-        readOnly: true,
-        createFromLocation: 1
-      }, () => console.log("Database OPENED"), this.logError);
-    }
-  }
-
-  transaction(callback) {
-    this.db.transaction(callback)
-  }
-
-}
-
 type Props = {};
-
 export default class App extends Component<Props> {
   constructor(props) {
     super(props);
