@@ -14,10 +14,10 @@ import LiteralMeaning from './LiteralMeaning'
 
 import Randomizer from './Randomizer'
 
-export default class KanjiDetail extends Component {
+export default class KanjiForDate extends Component {
   constructor(props) {
     super(props);
-    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: new Date()}
+    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: this.props.forDate}
     this.lookup = new Randomizer()
 
     this.handleSwipe = this.handleSwipe.bind(this);

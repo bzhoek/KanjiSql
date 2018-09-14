@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {AppState, NavigatorIOS, TabBarIOS, Text} from 'react-native';
 import Database from './Database'
-import KanjiDetail from './components/KanjiDetail'
+import KanjiForDate from './components/KanjiForDate'
 import KanjiList from './components/KanjiList'
 
 import {YellowBox} from 'react-native';
@@ -43,7 +43,7 @@ export default class App extends Component<Props> {
         <TabBarIOS.Item systemIcon="history"
           selected={this.state.selectedTab === 'tabDaily'}
           onPress={() => this.setTab('tabDaily')}>
-          <KanjiDetail db={this.database} index={0}/>
+          <KanjiForDate db={this.database} forDate={new Date()}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item systemIcon="more"
           selected={this.state.selectedTab === 'tabList'}
