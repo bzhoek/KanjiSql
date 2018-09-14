@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
-import {Text, TouchableHighlight, View, VirtualizedList, StyleSheet} from 'react-native';
+import {
+  Keyboard,
+  TextInput,
+  Text,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  View,
+  VirtualizedList,
+  StyleSheet
+} from 'react-native';
 import KanjiDetail from './KanjiDetail'
 
 class ListItem extends Component<Props> {
@@ -62,6 +71,16 @@ export default class KanjiList extends Component<Props> {
     });
   }
 
+  renderHeader = () => {
+    return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{flex: 1}}>
+          <TextInput />
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  };
+
   render() {
     return (
       <VirtualizedList
@@ -70,6 +89,7 @@ export default class KanjiList extends Component<Props> {
         getItem={(db, index) => index}
         getItemCount={() => this.state.count}
         keyExtractor={(item) => `key${item}`}
+        ListHeaderComponent={this.renderHeader}
       />
     );
   }
