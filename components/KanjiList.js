@@ -96,6 +96,18 @@ export default class KanjiList extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
+  filter: {
+    padding: 8,
+  },
+  filterInput: {
+    padding: 8,
+    fontSize: 18,
+    height: 44,
+    overflow: "hidden",
+    borderRadius: 8,
+    borderColor: '#D3D3D3',
+    borderWidth: 1,
+  },
   item: {
     flexDirection: 'row',
     padding: 8,
