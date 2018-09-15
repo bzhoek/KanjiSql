@@ -16,9 +16,14 @@ export default class KanjiList extends Component<Props> {
   }
 
   filter(text) {
-    this.database.filter = text
-    this.setState({filter: text})
-    this.loadCount()
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+      this.timeout = null
+    }
+    this.timeout = setTimeout(() => {
+      this.database.filter = text
+      this.loadCount()
+    }, 500)
   }
 
   loadCount() {
