@@ -19,14 +19,11 @@ class ListItem extends Component<Props> {
   }
 
   componentDidMount() {
-    this.props.db.index(this.props.item, this.props.filter, (item) => {
-      let state = {literal, meaning} = item
-      this.setState(state)
-    })
+    this.props.item.then((state) => this.setState(state))
   }
 
   _onPress = () => {
-    this.props.onPressItem(this.props.item);
+    this.props.onPressItem(this.state);
   }
 
   render() {
@@ -41,7 +38,8 @@ class ListItem extends Component<Props> {
 export default class KanjiList extends Component<Props> {
   constructor(props) {
     super(props);
-    this.state = {count: 0, filter: 'left'};
+    this.database = props.db;
+    this.state = {count: 0, filter: this.database.filter};
     this.filter = this.filter.bind(this);
   }
 
@@ -50,45 +48,31 @@ export default class KanjiList extends Component<Props> {
   }
 
   filter(text) {
+    this.database.filter = text
     this.setState({filter: text})
     this.loadCount()
   }
 
   loadCount() {
-    this.props.db.transaction((tx) => {
-        tx.executeSql(this.state.filter ?
-          `select count(*) as count
-                       from Search
-                       where Search match '${this.state.filter}'` :
-            `select count(*) as count
-                       from Search`, [], (tx, results) => {
-          this.setState({count: results.rows.item(0).count})
-        })
-      }
-    )
+    this.props.db.count().then((count) => this.setState({count: count}))
   }
 
-  _onPressItem = (index) => {
-    this.props.db.index(index, this.state.filter, (item) => {
-      let literal = item.literal
-      this.props.navigator.push({
-        component: KanjiListDetail,
-        title: literal,
-        passProps: {
-          index: index,
-          literal: literal,
-          db: this.props.db
-        }
-      });
-    })
+  onPressItem = (item) => {
+    this.props.navigator.push({
+      component: KanjiListDetail,
+      title: item.literal,
+      passProps: {
+        item: item
+      }
+    });
   }
 
   renderHeader = () => {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{flex: 1}}>
-          <TextInput style={{height: 40}}
-            placeholder="Type here to translate!" onChangeText={this.filter}
+        <View style={styles.filter}>
+          <TextInput style={styles.filterInput}
+            placeholder="Meaning, literal" onChangeText={this.filter}
             value={this.state.filter}
           />
         </View>
@@ -97,14 +81,14 @@ export default class KanjiList extends Component<Props> {
   };
 
   render() {
+    let database = this.database
     return (
       <VirtualizedList
-        data={this.props.db}
-        renderItem={({item}) => <ListItem db={this.props.db} item={item} filter={this.state.filter}
-          onPressItem={this._onPressItem}/>}
+        data={database}
+        renderItem={({index}) => <ListItem item={database.index(index)} onPressItem={this.onPressItem}/>}
         getItem={(db, index) => index}
         getItemCount={() => this.state.count}
-        keyExtractor={(item) => `key${item}`}
+        keyExtractor={(index) => `key${index}`}
         ListHeaderComponent={this.renderHeader}
       />
     );
