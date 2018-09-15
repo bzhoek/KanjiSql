@@ -11,7 +11,10 @@ export default class ListItem extends Component<Props> {
 
   componentDidMount() {
     this._mounted = true
-    this.props.item.then((state) => {
+  }
+
+  componentWillReceiveProps(nextProps) {
+    nextProps.item.then((state) => {
       if (this._mounted) this.setState(state)
     })
   }
