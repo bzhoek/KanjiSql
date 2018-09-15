@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, WebView} from 'react-native';
+import {StyleSheet, View, WebView} from 'react-native';
 import html from './Kanji.html'
 import LiteralMeaning from './LiteralMeaning'
 
@@ -18,8 +18,7 @@ export default class ListDetail extends Component {
           style={styles.drawing} key={literal}
           injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         <View style={styles.detail}>
-          <Text style={styles.text}>{frequency}</Text>
-          <LiteralMeaning literal={literal} meaning={meaning}/>
+          <LiteralMeaning literal={literal} meaning={frequency ? `${meaning} #${frequency}` : meaning}/>
         </View>
       </View>
     )
