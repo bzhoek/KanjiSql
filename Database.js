@@ -50,7 +50,7 @@ export default class Database {
   index(index) {
     return new Promise((resolve) => {
       this.execute(this.filter
-        ? `select * from Search where Search match '${this.filter}' limit 1 offset ${index}`
+        ? `select * from Kanji where unicode = (select unicode from Search where Search match '${this.filter}' limit 1 offset ${index})`
         : `select * from Kanji limit 1 offset ${index}`, (results) => {
         resolve(results.rows.item(0))
       })
