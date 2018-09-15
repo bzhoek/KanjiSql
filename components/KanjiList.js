@@ -57,12 +57,15 @@ export default class KanjiList extends Component<Props> {
     let database = this.database
     return (
       <VirtualizedList
+        extraData={this.state.count}
         data={database}
-        renderItem={({index}) => <ListItem item={database.index(index)} onPressItem={this.onPressItem}/>}
+        renderItem={({index}) => <ListItem item={database.index(index)} extraData={this.state.count}
+          onPressItem={this.onPressItem}/>}
         getItem={(db, index) => index}
         getItemCount={() => this.state.count}
         keyExtractor={(index) => `key${index}`}
         ListHeaderComponent={this.renderHeader}
+        initialNumToRender={10}
       />
     );
   }
