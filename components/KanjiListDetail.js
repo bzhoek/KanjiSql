@@ -12,7 +12,7 @@ export default class KanjiListDetail extends Component {
   componentDidMount() {
     this.props.db.transaction((tx) => {
       tx.executeSql(`select *
-                     from Kanji limit 1 offset ${this.props.index}`, [], (tx, results) => {
+                     from Kanji where literal = '${this.props.literal}'`, [], (tx, results) => {
         let state = {drawing, literal, meaning, frequency} = results.rows.item(0)
         this.setState(state)
       })

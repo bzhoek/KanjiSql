@@ -31,4 +31,18 @@ export default class Database {
     this.db.transaction(callback)
   }
 
+  index(index, filter, callback) {
+    this.db.transaction((tx) => {
+        tx.executeSql(filter ?
+          `select *
+                       from Search
+                       where Search match '${filter}' limit 1 offset ${index}` :
+            `select *
+                       from Kanji limit 1 offset ${index}`, [], (tx, results) => {
+          callback(results.rows.item(0))
+        })
+      }
+    )
+  }
+
 }
