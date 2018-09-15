@@ -1,22 +1,12 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, Text, View, WebView} from 'react-native';
+import {StyleSheet, Text, View, WebView} from 'react-native';
 import html from './Kanji.html'
 import LiteralMeaning from './LiteralMeaning'
 
 export default class KanjiListDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {drawing: "", literal: "", meaning: "", frequency: 0}
-  }
-
-  componentDidMount() {
-    this.props.db.transaction((tx) => {
-      tx.executeSql(`select *
-                     from Kanji where literal = '${this.props.literal}'`, [], (tx, results) => {
-        let state = {drawing, literal, meaning, frequency} = results.rows.item(0)
-        this.setState(state)
-      })
-    })
+    this.state = {drawing, literal, meaning, frequency} = props.item
   }
 
   render() {
