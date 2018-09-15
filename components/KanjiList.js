@@ -1,39 +1,7 @@
 import React, {Component} from 'react';
-import {
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-  View,
-  VirtualizedList
-} from 'react-native';
-import KanjiListDetail from './KanjiListDetail'
-import LiteralMeaning from './LiteralMeaning'
-
-class ListItem extends Component<Props> {
-  constructor(props) {
-    super(props);
-    this.state = {literal: "", meaning: "Fetching..."};
-    this._onPress = this._onPress.bind(this);
-  }
-
-  componentDidMount() {
-    this.props.item.then((state) => this.setState(state))
-  }
-
-  _onPress = () => {
-    this.props.onPressItem(this.state);
-  }
-
-  render() {
-    return (
-      <TouchableHighlight onPress={this._onPress} underlayColor='#dddddd'>
-        <LiteralMeaning literal={this.state.literal} meaning={this.state.meaning}/>
-      </TouchableHighlight>
-    )
-  }
-}
+import {Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback, View, VirtualizedList} from 'react-native';
+import ListDetail from './ListDetail'
+import ListItem from './ListItem'
 
 export default class KanjiList extends Component<Props> {
   constructor(props) {
@@ -59,7 +27,7 @@ export default class KanjiList extends Component<Props> {
 
   onPressItem = (item) => {
     this.props.navigator.push({
-      component: KanjiListDetail,
+      component: ListDetail,
       title: item.literal,
       passProps: {
         item: item

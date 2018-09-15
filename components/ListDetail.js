@@ -3,7 +3,7 @@ import {StyleSheet, Text, View, WebView} from 'react-native';
 import html from './Kanji.html'
 import LiteralMeaning from './LiteralMeaning'
 
-export default class KanjiListDetail extends Component {
+export default class ListDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {drawing, literal, meaning, frequency} = props.item
