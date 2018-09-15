@@ -50,36 +50,29 @@ export default class KanjiForDate extends Component {
 
   pickDate(newDate) {
     this.setState({forDate: newDate})
+    this.loadForState()
   }
 
   componentDidMount() {
     this.loadForState()
   }
 
-  componentDidUpdate() {
-    this.loadForState()
-  }
-
   loadForState() {
     let index = this.lookup.forDate(this.state.forDate)
-
-    this.props.db.transaction((tx) => {
-      tx.executeSql(`select *
-                     from Kanji
-                     where frequency not null
-                     order by frequency limit 1 offset ${index}`, [], (tx, results) => {
-        let state = {drawing, literal, meaning, frequency} = results.rows.item(0)
-        this.setState(state)
-      })
+    this.props.db.frequent(index).then((item) => {
+      let state = {drawing, literal, meaning, frequency} = item
+      this.setState(state)
     })
   }
-
 
   render() {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
     let {literal, meaning, frequency} = this.state
     return (
       <SafeAreaView style={styles.view}>
+        <TouchableHighlight onPress={this.onPressDate} underlayColor='#dddddd'>
+          <Text style={styles.text}>{this.state.forDate.toDateString()}</Text>
+        </TouchableHighlight>
         {this.state.picking &&
         <DatePickerIOS style={styles.pick}
           mode='date'
@@ -93,12 +86,7 @@ export default class KanjiForDate extends Component {
             injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         </View>
         <View style={styles.detail}>
-          <TouchableHighlight onPress={this.onPressDate} underlayColor='#dddddd'>
-            <Text style={styles.text}>{this.state.forDate.toDateString()}</Text>
-          </TouchableHighlight>
-
-          <Text style={styles.text}>{frequency}</Text>
-          <LiteralMeaning literal={literal} meaning={meaning}/>
+          <LiteralMeaning literal={literal} meaning={`${meaning} #${frequency}`}/>
         </View>
       </SafeAreaView>
     )
@@ -120,5 +108,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    lineHeight: 44,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   }
 });

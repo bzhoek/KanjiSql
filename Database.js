@@ -3,6 +3,7 @@ import SQLite from 'react-native-sqlite-storage';
 export default class Database {
   constructor() {
     this.db = null
+    this.filter = ''
     this.open()
   }
 
@@ -27,22 +28,43 @@ export default class Database {
     }
   }
 
-  transaction(callback) {
-    this.db.transaction(callback)
+  execute(sql, cb) {
+    this.db.transaction((tx) => {
+      tx.executeSql(sql, [], (tx, results) => {
+        cb(results)
+      })
+    })
   }
 
-  index(index, filter, callback) {
-    this.db.transaction((tx) => {
-        tx.executeSql(filter ?
-          `select *
-                       from Search
-                       where Search match '${filter}' limit 1 offset ${index}` :
-            `select *
-                       from Kanji limit 1 offset ${index}`, [], (tx, results) => {
-          callback(results.rows.item(0))
-        })
-      }
-    )
+
+  count() {
+    return new Promise((resolve) => {
+      this.execute(this.filter
+        ? `select count(*) as count from Search where Search match '${this.filter}'`
+        : `select count(*) as count from Search`, (results) => {
+        resolve(results.rows.item(0).count)
+      })
+    })
+  }
+
+  index(index) {
+    return new Promise((resolve) => {
+      this.execute(this.filter
+        ? `select * from Search where Search match '${this.filter}' limit 1 offset ${index}`
+        : `select * from Kanji limit 1 offset ${index}`, (results) => {
+        resolve(results.rows.item(0))
+      })
+    })
+  }
+
+  frequent(index) {
+    return new Promise((resolve) => {
+      this.execute(`select * from Kanji
+                     where frequency not null
+                     order by frequency limit 1 offset ${index}`, (results) => {
+        resolve(results.rows.item(0))
+      })
+    })
   }
 
 }

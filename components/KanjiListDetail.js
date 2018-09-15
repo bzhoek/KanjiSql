@@ -23,17 +23,15 @@ export default class KanjiListDetail extends Component {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
     let {literal, meaning, frequency} = this.state
     return (
-      <SafeAreaView style={styles.view}>
-        <View style={{flex: 1}}>
-          <WebView source={html} originWhitelist={['*']} bounces={false}
-            style={styles.drawing} key={literal}
-            injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
-        </View>
+      <View style={{flex: 1}}>
+        <WebView source={html} originWhitelist={['*']} bounces={false}
+          style={styles.drawing} key={literal}
+          injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         <View style={styles.detail}>
           <Text style={styles.text}>{frequency}</Text>
           <LiteralMeaning literal={literal} meaning={meaning}/>
         </View>
-      </SafeAreaView>
+      </View>
     )
   }
 }
