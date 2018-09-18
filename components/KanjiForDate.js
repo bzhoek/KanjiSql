@@ -17,7 +17,7 @@ import Randomizer from './Randomizer'
 export default class KanjiForDate extends Component {
   constructor(props) {
     super(props);
-    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: this.props.forDate}
+    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: this.props.forDate, refreshed: null}
     this.lookup = new Randomizer()
 
     this.handleSwipe = this.handleSwipe.bind(this);
@@ -29,11 +29,12 @@ export default class KanjiForDate extends Component {
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
-      onPanResponderGrant: (e, gestureState) => {
-        console.log(`Granted ${gestureState.x0}`)
-      },
       onPanResponderRelease: (e, gestureState) => {
-        this.handleSwipe(gestureState.dx > 0 ? -1 : +1)
+        if (Math.abs(gestureState.dx) > 64) {
+          this.handleSwipe(gestureState.dx > 0 ? -1 : +1)
+        } else if (Math.abs(gestureState.dy) > 64) {
+          this.handleSwipe(0) // reload
+        }
       }
     });
   }
@@ -41,11 +42,12 @@ export default class KanjiForDate extends Component {
   handleSwipe(delta) {
     let newDate = this.state.forDate
     newDate.setDate(newDate.getDate() + delta)
-    this.setState({forDate: newDate})
+    this.pickDate(newDate)
   }
 
   onPressDate() {
     this.setState({picking: !this.state.picking})
+    this.loadForState()
   }
 
   pickDate(newDate) {
@@ -62,12 +64,13 @@ export default class KanjiForDate extends Component {
     this.props.db.frequent(index).then((item) => {
       let state = {drawing, literal, meaning, frequency} = item
       this.setState(state)
+      this.setState({refreshed: new Date()})
     })
   }
 
   render() {
     let drawing = this.state.drawing.replace(/(\r\n|\n|\r)/gm, "")
-    let {literal, meaning, frequency} = this.state
+    let {literal, meaning, frequency, forDate} = this.state
     return (
       <SafeAreaView style={styles.view}>
         <TouchableHighlight onPress={this.onPressDate} underlayColor='#dddddd'>
@@ -82,7 +85,7 @@ export default class KanjiForDate extends Component {
         }
         <View style={{flex: 1}}{...this._panResponder.panHandlers}>
           <WebView source={html} originWhitelist={['*']} bounces={false}
-            style={styles.drawing} key={literal}
+            style={styles.drawing} key={this.state.refreshed}
             injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
         </View>
         <View style={styles.detail}>
