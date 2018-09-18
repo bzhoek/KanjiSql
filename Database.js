@@ -2,6 +2,7 @@ import SQLite from 'react-native-sqlite-storage';
 
 export default class Database {
   constructor() {
+    // SQLite.DEBUG(true);
     this.db = null
     this.filter = ''
     this.open()
