@@ -4,6 +4,7 @@ import {
   PanResponder,
   SafeAreaView,
   StyleSheet,
+  Switch,
   Text,
   TouchableHighlight,
   View,
@@ -17,12 +18,22 @@ import Randomizer from './Randomizer'
 export default class KanjiForDate extends Component {
   constructor(props) {
     super(props);
-    this.state = {drawing: "", literal: "", meaning: "", frequency: 0, forDate: this.props.forDate, refreshed: null}
+    this.state = {
+      drawing: "",
+      literal: "",
+      meaning: "",
+      frequency: 0,
+      forDate: this.props.forDate,
+      refreshed: null,
+      preview: false,
+      reveal: false
+    }
     this.lookup = new Randomizer()
 
     this.handleSwipe = this.handleSwipe.bind(this);
     this.pickDate = this.pickDate.bind(this);
     this.onPressDate = this.onPressDate.bind(this);
+    this.onPressReveal = this.onPressReveal.bind(this);
   }
 
   componentWillMount() {
@@ -50,8 +61,12 @@ export default class KanjiForDate extends Component {
     this.loadForState()
   }
 
+  onPressReveal() {
+    this.setState({reveal: true})
+  }
+
   pickDate(newDate) {
-    this.setState({forDate: newDate})
+    this.setState({forDate: newDate, reveal: false})
     this.loadForState()
   }
 
@@ -84,12 +99,18 @@ export default class KanjiForDate extends Component {
         />
         }
         <View style={{flex: 1}}{...this._panResponder.panHandlers}>
-          <WebView source={html} originWhitelist={['*']} bounces={false}
-            style={styles.drawing} key={this.state.refreshed}
-            injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
+          {this.state.preview || this.state.reveal
+            ? <WebView source={html} originWhitelist={['*']} bounces={false}
+              style={styles.drawing} key={this.state.refreshed}
+              injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
+            : <TouchableHighlight style={{flex: 1}} onPress={this.onPressReveal} underlayColor='#dddddd'>
+              <Text style={styles.testing}>Draw from memory</Text>
+            </TouchableHighlight>
+          }
         </View>
         <View style={styles.detail}>
-          <LiteralMeaning literal={literal} meaning={`${meaning} #${frequency}`}/>
+          <LiteralMeaning literal={this.state.preview ? literal : "⋯"} meaning={`${meaning} #${frequency}`}/>
+          <Switch value={this.state.preview} onValueChange={(value) => this.setState({preview: value})}/><Text>Preview</Text>
         </View>
       </SafeAreaView>
     )
@@ -112,6 +133,12 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     lineHeight: 44,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
+  testing: {
+    lineHeight: 180,
+    fontSize: 24,
     textAlign: 'center',
     textAlignVertical: 'center',
   }
