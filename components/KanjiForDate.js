@@ -33,7 +33,6 @@ export default class KanjiForDate extends Component {
     this.handleSwipe = this.handleSwipe.bind(this);
     this.pickDate = this.pickDate.bind(this);
     this.onPressDate = this.onPressDate.bind(this);
-    this.onPressReveal = this.onPressReveal.bind(this);
   }
 
   componentWillMount() {
@@ -51,18 +50,18 @@ export default class KanjiForDate extends Component {
   }
 
   handleSwipe(delta) {
-    let newDate = this.state.forDate
-    newDate.setDate(newDate.getDate() + delta)
-    this.pickDate(newDate)
+    if (delta === 0 && !this.state.reveal) {
+      this.setState({reveal: true})
+    } else {
+      let newDate = this.state.forDate
+      newDate.setDate(newDate.getDate() + delta)
+      this.pickDate(newDate)
+    }
   }
 
   onPressDate() {
     this.setState({picking: !this.state.picking})
     this.loadForState()
-  }
-
-  onPressReveal() {
-    this.setState({reveal: true})
   }
 
   pickDate(newDate) {
@@ -103,14 +102,13 @@ export default class KanjiForDate extends Component {
             ? <WebView source={html} originWhitelist={['*']} bounces={false}
               style={styles.drawing} key={this.state.refreshed}
               injectedJavaScript={`document.getElementById('kanji-strokes').innerHTML = '${drawing}'; animate_paths()`}/>
-            : <TouchableHighlight style={{flex: 1}} onPress={this.onPressReveal} underlayColor='#dddddd'>
-              <Text style={styles.testing}>Draw from memory</Text>
-            </TouchableHighlight>
+            : <Text style={styles.testing}>Draw from memory</Text>
           }
         </View>
         <View style={styles.detail}>
           <LiteralMeaning literal={this.state.preview ? literal : "⋯"} meaning={`${meaning} #${frequency}`}/>
-          <Switch value={this.state.preview} onValueChange={(value) => this.setState({preview: value})}/><Text>Preview</Text>
+          <Switch value={this.state.preview}
+            onValueChange={(value) => this.setState({preview: value})}/><Text>Preview</Text>
         </View>
       </SafeAreaView>
     )
